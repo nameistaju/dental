@@ -8,8 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <!-- EmailJS Library -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3.11.0/dist/index.min.js"></script>
 </head>
 <body>
   <div id="loader">
@@ -143,49 +141,65 @@
       <h2 class="section-title reveal-up">The Experts Behind<br /><span class="gradient-text">Your Perfect Smile</span></h2>
 
       <div class="doctors-grid">
-        <div class="doctor-card reveal-up">
-          <div class="doctor-img-wrap">
-            <img src="Dr. Goutham Reddy Gajjala.png" alt="Dr. Goutham Reddy Gajjala" class="doctor-img zoom-img" />
-            <div class="doctor-badge">Lead Dental Surgeon</div>
-            <div class="doctor-overlay">
-              <p>Book with Dr. Goutham</p>
-              <a href="#contact" class="btn-sm">Schedule</a>
+        <article class="doctor-card reveal-up">
+          <div class="doctor-visual">
+            <div class="doctor-visual-inner">
+              <img src="Dr. Goutham Reddy Gajjala.png" alt="Dr. Goutham Reddy Gajjala" class="doctor-img" />
+              <div class="doctor-visual-overlay"></div>
+              <div class="doctor-visual-accent"></div>
+            </div>
+            <div class="doctor-hero-copy">
+              <span class="doctor-chip">Lead Dental Surgeon</span>
+              <div class="doctor-meta">
+                <span class="experience-badge">5+ Years Experience</span>
+                <span class="specialist-label">Smile Design Expert</span>
+              </div>
             </div>
           </div>
-          <div class="doctor-info">
-            <h3>Dr. Goutham Reddy Gajjala</h3>
-            <p class="doctor-title">Lead Dental Surgeon</p>
+          <div class="doctor-info premium">
+            <div class="doctor-heading-row">
+              <h3>Dr. Goutham Reddy Gajjala</h3>
+              <a href="#contact" class="btn-sm">Book Consultation</a>
+            </div>
+            <p class="doctor-title">Advanced Implant & Cosmetic Dentistry</p>
+            <p class="doctor-bio">A specialist in refined smile transformations, Dr. Goutham combines clinical precision with a warm, patient-focused experience.</p>
             <div class="doctor-tags">
               <span>Implants</span>
-              <span>RCT</span>
-              <span>Aligners</span>
+              <span>Smile Design</span>
+              <span>Aesthetic</span>
             </div>
-            <p class="doctor-bio">With over 5 years of specialized experience, Dr. Goutham brings precision and artistry to every procedure, from complex implants to cosmetic smile designs.</p>
-            <div class="doctor-exp"><strong>5+</strong> Years of Excellence</div>
           </div>
-        </div>
+        </article>
 
-        <div class="doctor-card reveal-up">
-          <div class="doctor-img-wrap">
-            <img src="Dr. Udayabhanu Pallikala.png" alt="Dr. Udayabhanu Pallikala" class="doctor-img zoom-img" />
-            <div class="doctor-badge">Dental Care Specialist</div>
-            <div class="doctor-overlay">
-              <p>Book with Dr. Udayabhanu</p>
-              <a href="#contact" class="btn-sm">Schedule</a>
+        <article class="doctor-card reveal-up">
+          <div class="doctor-visual">
+            <div class="doctor-visual-inner">
+              <img src="Dr. Udayabhanu Pallikala.png" alt="Dr. Udayabhanu Pallikala" class="doctor-img" />
+              <div class="doctor-visual-overlay"></div>
+              <div class="doctor-visual-accent accent-secondary"></div>
+            </div>
+            <div class="doctor-hero-copy">
+              <span class="doctor-chip">Dental Care Specialist</span>
+              <div class="doctor-meta">
+                <span class="experience-badge">Patient-Focused Care</span>
+                <span class="specialist-label">Family Dental Wellness</span>
+              </div>
             </div>
           </div>
-          <div class="doctor-info">
-            <h3>Dr. Udayabhanu Pallikala</h3>
-            <p class="doctor-title">Dental Care Specialist</p>
+          <div class="doctor-info premium">
+            <div class="doctor-heading-row">
+              <h3>Dr. Udayabhanu Pallikala</h3>
+              <a href="#contact" class="btn-sm">Book Consultation</a>
+            </div>
+            <p class="doctor-title">Gentle, Modern Family Dentistry</p>
+            <p class="doctor-bio">Dr. Udayabhanu makes every visit calm and confidence-building with thoughtful care for patients of all ages.</p>
             <div class="doctor-tags">
               <span>Cosmetic</span>
               <span>Pediatric</span>
-              <span>Ortho</span>
+              <span>Orthodontics</span>
             </div>
-            <p class="doctor-bio">Dr. Udayabhanu is known for a deeply patient-centered approach, ensuring every visitor from children to seniors feels heard, comfortable, and cared for.</p>
-            <div class="doctor-exp"><strong>Patient-First</strong> Philosophy</div>
           </div>
-        </div>
+        </article>
       </div>
     </div>
   </section>
@@ -634,7 +648,6 @@
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="toast-container"></div>
   
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="script.js"></script>
   
 </body>

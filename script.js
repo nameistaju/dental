@@ -208,16 +208,34 @@ To make the form work, you need to:
 5. Replace the values below with your own:
 ================================================================================
 */
-emailjs.init("8TFDxrhq4HBAitG9r");   
 const EMAILJS_CONFIG = {
   PUBLIC_KEY: '8TFDxrhq4HBAitG9r',      // Get from EmailJS dashboard
   SERVICE_ID: 'service_h3987vg',      // Get from EmailJS dashboard
   TEMPLATE_ID: 'template_v4hjqp9'     // Get from EmailJS dashboard
 };
 
-// Initialize EmailJS (call this once when the page loads)
-if (EMAILJS_CONFIG.PUBLIC_KEY !== '8TFDxrhq4HBAitG9r') {
-  emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+async function sendEmailJS(formData) {
+  const payload = {
+    service_id: EMAILJS_CONFIG.SERVICE_ID,
+    template_id: EMAILJS_CONFIG.TEMPLATE_ID,
+    user_id: EMAILJS_CONFIG.PUBLIC_KEY,
+    template_params: formData
+  };
+
+  const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.error || `Email send failed with status ${response.status}`);
+  }
+
+  return response;
 }
 
 /*
@@ -437,15 +455,10 @@ if (contactForm) {
     submitBtn.textContent = 'Sending...';
 
     try {
-      // Send email via EmailJS
-      const response = await emailjs.send(
-        EMAILJS_CONFIG.SERVICE_ID,
-        EMAILJS_CONFIG.TEMPLATE_ID,
-        formData
-      );
+      // Send email via EmailJS REST API
+      const response = await sendEmailJS(formData);
 
-      if (response.status === 200) {
-        // Success
+      if (response.ok) {
         submitBtn.classList.remove('loading');
         submitBtn.textContent = '✓ Request Sent!';
         
