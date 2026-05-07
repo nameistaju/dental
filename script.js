@@ -189,24 +189,296 @@ if (track && dotsContainer && prevBtn && nextBtn) {
   });
 }
 
+/*
+================================================================================
+EMAILJS CONFIGURATION
+================================================================================
+To make the form work, you need to:
+
+1. Go to https://dashboard.emailjs.com
+2. Sign up (free) or log in
+3. Add a new service (Gmail, Outlook, etc.)
+4. Create an email template with these variables:
+   - {{user_name}} - Full Name
+   - {{user_phone}} - Phone Number
+   - {{user_email}} - Email Address
+   - {{treatment_needed}} - Treatment Needed
+   - {{message}} - Message
+
+5. Replace the values below with your own:
+================================================================================
+*/
+emailjs.init("8TFDxrhq4HBAitG9r");   
+const EMAILJS_CONFIG = {
+  PUBLIC_KEY: '8TFDxrhq4HBAitG9r',      // Get from EmailJS dashboard
+  SERVICE_ID: 'service_h3987vg',      // Get from EmailJS dashboard
+  TEMPLATE_ID: 'template_v4hjqp9'     // Get from EmailJS dashboard
+};
+
+// Initialize EmailJS (call this once when the page loads)
+if (EMAILJS_CONFIG.PUBLIC_KEY !== '8TFDxrhq4HBAitG9r') {
+  emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+}
+
+/*
+================================================================================
+FORM VALIDATION & SUBMISSION
+================================================================================
+*/
+
+class FormValidator {
+  constructor(form) {
+    this.form = form;
+    this.inputs = {
+      fullName: form.querySelector('#fullName'),
+      phone: form.querySelector('#phone'),
+      email: form.querySelector('#email'),
+      treatment: form.querySelector('#treatment'),
+      message: form.querySelector('#message')
+    };
+    this.errorElements = {
+      fullName: form.querySelector('#nameError'),
+      phone: form.querySelector('#phoneError'),
+      email: form.querySelector('#emailError'),
+      treatment: form.querySelector('#treatmentError'),
+      message: form.querySelector('#messageError')
+    };
+    this.setupListeners();
+  }
+
+  setupListeners() {
+    // Real-time validation on blur
+    Object.values(this.inputs).forEach(input => {
+      if (input) {
+        input.addEventListener('blur', () => this.validateField(input));
+        input.addEventListener('input', () => {
+          if (input.classList.contains('error')) {
+            this.validateField(input);
+          }
+        });
+      }
+    });
+  }
+
+  validateField(input) {
+    const fieldName = input.name || input.id;
+    let error = '';
+
+    // Check if empty
+    if (!input.value.trim()) {
+      error = 'This field is required';
+    } else {
+      // Specific validation based on field type
+      switch (fieldName) {
+        case 'user_name':
+          if (input.value.trim().length < 2) {
+            error = 'Name must be at least 2 characters';
+          }
+          break;
+
+        case 'user_phone':
+          if (!this.isValidPhone(input.value)) {
+            error = 'Please enter a valid phone number';
+          }
+          break;
+
+        case 'user_email':
+          if (!this.isValidEmail(input.value)) {
+            error = 'Please enter a valid email address';
+          }
+          break;
+
+        case 'treatment_needed':
+          if (!input.value) {
+            error = 'Please select a treatment';
+          }
+          break;
+
+        case 'message':
+          if (input.value.trim().length < 5) {
+            error = 'Message must be at least 5 characters';
+          }
+          break;
+      }
+    }
+
+    this.setFieldError(input, error);
+    return !error;
+  }
+
+  setFieldError(input, error) {
+    const errorElement = this.errorElements[input.name || input.id];
+    
+    if (error) {
+      input.classList.add('error');
+      input.classList.remove('success');
+      if (errorElement) errorElement.textContent = error;
+    } else {
+      input.classList.remove('error');
+      input.classList.add('success');
+      if (errorElement) errorElement.textContent = '';
+    }
+  }
+
+  isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  isValidPhone(phone) {
+    // Accept various phone formats (with +, dashes, spaces)
+    const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\\s.]?[(]?[0-9]{1,4}[)]?[-\\s.]?[0-9]{1,9}$/;
+    return phoneRegex.test(phone.replace(/\\s/g, ''));
+  }
+
+  validateAll() {
+    let isValid = true;
+    Object.values(this.inputs).forEach(input => {
+      if (input && !this.validateField(input)) {
+        isValid = false;
+      }
+    });
+    return isValid;
+  }
+
+  getFormData() {
+    return {
+      user_name: this.inputs.fullName.value.trim(),
+      user_phone: this.inputs.phone.value.trim(),
+      user_email: this.inputs.email.value.trim(),
+      treatment_needed: this.inputs.treatment.value,
+      message: this.inputs.message.value.trim()
+    };
+  }
+
+  reset() {
+    this.form.reset();
+    Object.values(this.inputs).forEach(input => {
+      if (input) {
+        input.classList.remove('error', 'success');
+        const errorElement = this.errorElements[input.name || input.id];
+        if (errorElement) errorElement.textContent = '';
+      }
+    });
+  }
+}
+
+// Toast Notification System
+class Toast {
+  static show(message, type = 'info', duration = 4000) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icon = this.getIcon(type);
+    toast.innerHTML = `
+      <div class="toast-icon">${icon}</div>
+      <div class="toast-message">${message}</div>
+      <button class="toast-close">&times;</button>
+    `;
+
+    container.appendChild(toast);
+
+    const closeBtn = toast.querySelector('.toast-close');
+    closeBtn.addEventListener('click', () => this.removeToast(toast));
+
+    // Auto remove after duration
+    const timeoutId = setTimeout(() => this.removeToast(toast), duration);
+
+    closeBtn.addEventListener('click', () => clearTimeout(timeoutId));
+
+    return toast;
+  }
+
+  static getIcon(type) {
+    const icons = {
+      success: '✓',
+      error: '✕',
+      info: 'ℹ'
+    };
+    return icons[type] || icons.info;
+  }
+
+  static removeToast(toast) {
+    toast.classList.add('hide');
+    setTimeout(() => toast.remove(), 400);
+  }
+}
+
+// Form submission handler
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
-  contactForm.addEventListener('submit', function(e) {
+  const validator = new FormValidator(contactForm);
+  const submitBtn = contactForm.querySelector('#submitBtn');
+
+  contactForm.addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    const submitBtn = this.querySelector('.btn-primary');
+    // Validate all fields
+    if (!validator.validateAll()) {
+      Toast.show('Please fix the errors above before submitting', 'error');
+      return;
+    }
+
+    // Check if EmailJS is configured
+    if (EMAILJS_CONFIG.PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+      Toast.show('EmailJS is not configured. Contact the administrator.', 'error');
+      console.error('EmailJS configuration missing. Please add your credentials to script.js');
+      return;
+    }
+
+    // Get form data
+    const formData = validator.getFormData();
+
+    // Show loading state
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
     const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
 
-    submitBtn.textContent = 'Request Sent';
-    submitBtn.style.background = 'linear-gradient(135deg, #2e7d32, #4caf50)';
+    try {
+      // Send email via EmailJS
+      const response = await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        formData
+      );
 
-    setTimeout(() => {
+      if (response.status === 200) {
+        // Success
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = '✓ Request Sent!';
+        
+        Toast.show('Your appointment request has been sent successfully! We will contact you soon.', 'success');
+        
+        // Reset form
+        validator.reset();
+
+        // Reset button after 3 seconds
+        setTimeout(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }, 3000);
+      }
+    } catch (error) {
+      // Error occurred
+      console.error('Email send error:', error);
+      
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
       submitBtn.textContent = originalText;
-      submitBtn.style.background = '';
-      this.reset();
-    }, 3000);
+
+      // Show error message
+      const errorMessage = error.text || 'Failed to send request. Please try again or call us directly.';
+      Toast.show(errorMessage, 'error', 5000);
+
+      // Fallback: Suggest alternative contact methods
+      Toast.show('You can also call us at +91 81878 97896', 'info', 6000);
+    }
   });
 }
+
+'use strict';
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function(e) {
